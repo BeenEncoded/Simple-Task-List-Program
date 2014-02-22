@@ -90,9 +90,16 @@ namespace common
         using namespace std;
         
         vector<int> key;
-        while(input::kbhit())
+        if(input::kbhit())
         {
             key.push_back(input::getch());
+            if(IS_CONTROL(key[0]))
+            {
+                while(input::kbhit())
+                {
+                    key.push_back(input::getch());
+                }
+            }
         }
         return key;
     }
