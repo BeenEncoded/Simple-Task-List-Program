@@ -21,7 +21,8 @@ User create a list of tasks and apply a catagory to them.  They should be able t
 
 *\>\*task*
 
-The user will scroll up/down the list using a windowed scroll pane of the list.  They should be able to delete, add, and modify any tas that they select.
+The user will scroll up/down the list using a windowed scroll pane of the list.  They  
+ should be able to delete, add, and modify any tas that they select.
 
 ---
 
