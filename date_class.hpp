@@ -1,7 +1,7 @@
 #ifndef DATE_CLASS_HPP_INCLUDED
 #define DATE_CLASS_HPP_INCLUDED
 #include <time.h>
-
+//testing required
 namespace date
 {
     /* Used to apply math to dates.  Allows
@@ -15,6 +15,8 @@ namespace date
         
         bool operator==(const date_val&);
         bool operator!=(const date_val&);
+        bool operator<(const date_val&);
+        bool operator<=(const date_val&);
         
         void to_tm(struct tm&) const;
         

@@ -109,6 +109,36 @@ namespace date
     {
         return !(this->operator==(i));
     }
+    
+    bool date_val::operator<(const date_val& d)
+    {
+        bool lessthan(false);
+        switch(this->year < d.year)
+        {
+            case true:
+            {
+                lessthan = true;
+            }
+            break;
+            
+            case false:
+            {
+                lessthan = (this->yday < d.yday);
+            }
+            break;
+            
+            default:
+            {
+            }
+            break;
+        }
+        return lessthan;
+    }
+    
+    bool date_val::operator<=(const date_val& d)
+    {
+        return (this->operator<(d) || this->operator==(d));
+    }
 
     /* Converts this time into a tm structure (using a pre-existing one, 
      for flexibility). */
