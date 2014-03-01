@@ -9,6 +9,7 @@ namespace common
     void cls();
     char gkey();
     std::vector<int> gkey_funct();
+    bool kbhit();
     
     
     bool is_letter(const char&);

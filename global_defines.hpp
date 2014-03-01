@@ -23,4 +23,7 @@
 #define IS_CONTROL(key) (key == 27)
 #define GSTRING_CANCEL "sdfnwms90fhqm=3-f0-vq-4hq4h\\qethgq\\[ht[q45h"
 
+//debug mode (includes asserts)
+#define NDEBUG
+
 #endif

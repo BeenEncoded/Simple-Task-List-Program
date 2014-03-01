@@ -85,6 +85,11 @@ namespace common
         return input::getch();
     }
     
+    bool kbhit()
+    {
+        return input::kbhit();
+    }
+    
     std::vector<int> gkey_funct()
     {
         using namespace std;
@@ -109,6 +114,7 @@ namespace common
         std::string get_user_string(const std::string& s)
         {
             using namespace std;
+            
             
             vector<int> key;
             bool finished(false);
