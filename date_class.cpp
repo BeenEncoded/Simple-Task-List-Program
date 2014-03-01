@@ -93,7 +93,7 @@ namespace date
 
     void date_val::operator=(const struct tm& i)
     {
-        this->year = i.tm_year;
+        this->year = (1900 + i.tm_year);
         this->month = i.tm_mon;
         this->weekday = i.tm_wday;
         this->mday = (i.tm_mday - 1);
@@ -146,7 +146,8 @@ namespace date
     {
         i.tm_mon = this->month;
         i.tm_mday = (this->mday + 1);
-        i.tm_year = this->year;
+        assert(this->year > 1900);
+        i.tm_year = (1900 - this->year);
         i.tm_yday = this->yday;
         i.tm_wday = this->weekday;
     }
@@ -154,13 +155,13 @@ namespace date
     /** All operators add/subract a specified number of days
      to or from the date. */
 
-    date_val date_val::operator++(void)
+    date_val date_val::operator++(int i)
     {
         *this = (*this + 1);
         return *this;
     }
 
-    date_val date_val::operator--(void)
+    date_val date_val::operator--(int i)
     {
         *this = (*this - 1);
         return *this;
@@ -181,7 +182,7 @@ namespace date
             if(tempdate.yday >= (__isleap(tempdate.year) ? 366 : 365))
             {
                 tempdate.year++;
-                tempdate.yday %= (__isleap(tempdate.year) ? 366 : 365);
+                tempdate.yday = 0;
             }
 
             //then, we calculate the month and day of month based on the year-day.
@@ -281,6 +282,16 @@ namespace date
     {
         *this = (*this - i);
         return *this;
+    }
+    
+    std::string date_val::month_name() const
+    {
+        return month_names().at(this->month);
+    }
+    
+    std::string date_val::wday_name() const
+    {
+        return day_names().at(this->weekday);
     }
     
     

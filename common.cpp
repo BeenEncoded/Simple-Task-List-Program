@@ -70,6 +70,15 @@ namespace common
         return (count == 0);
     }
     
+    void wait()
+    {
+        for(short x = 0; x < 3; x++) std::cout<< std::endl;
+        std::cout<< "Press any key to continue..."<< std::endl;
+        cl();
+        gkey();
+        cl();
+    }
+    
     void cl()
     {
         input::cl();

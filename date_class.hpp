@@ -1,6 +1,9 @@
 #ifndef DATE_CLASS_HPP_INCLUDED
 #define DATE_CLASS_HPP_INCLUDED
 #include <time.h>
+
+#define YDAYS(year) (__isleap(year) ? 366 : 365)
+
 //testing required
 namespace date
 {
@@ -20,14 +23,17 @@ namespace date
         
         void to_tm(struct tm&) const;
         
-        date_val operator++(void);
-        date_val operator--(void);
+        date_val operator++(int);
+        date_val operator--(int);
         
         date_val operator+(const unsigned int&) const;
         date_val operator-(const unsigned int&) const;
         
         date_val operator+=(const unsigned int&);
         date_val operator-=(const unsigned int&);
+        
+        std::string month_name() const;
+        std::string wday_name() const;
         
         /** all vars start from 0. (except for the year)*/
         unsigned int year = 0, yday = 0;

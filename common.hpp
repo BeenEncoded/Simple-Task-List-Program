@@ -10,6 +10,7 @@ namespace common
     char gkey();
     std::vector<int> gkey_funct();
     bool kbhit();
+    void wait();
     
     
     bool is_letter(const char&);
