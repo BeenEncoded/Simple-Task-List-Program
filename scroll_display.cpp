@@ -238,31 +238,10 @@ namespace scrollDisplay
                 {
                     case true:
                     {
-                        switch(this->pos.part == 0)
-                        {
-                            case true:
-                            {
-                                this->pos.part = (this->wind.size - 1);
-                                this->pos.whole = (this->wind.beg + this->pos.part);
-                            }
-                            break;
-                            
-                            case false:
-                            {
-                                this->pos.whole += (this->wind.size - 1);
-                                this->pos.part = (this->wind.size - 1);
-                                this->wind.beg = (this->pos.whole - (this->wind.size - 1));
-                                success = true;
-                            }
-                            break;
-                            
-                            default:
-                            {
-                            }
-                            break;
-                        }
-                        
-                        
+                        this->pos.whole += (this->wind.size - 1);
+                        this->pos.part = (this->wind.size - 1);
+                        this->wind.beg = (this->pos.whole - (this->wind.size - 1));
+                        success = true;
                     }
                     break;
                     
