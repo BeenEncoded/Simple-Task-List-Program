@@ -153,12 +153,15 @@ namespace scrollDisplay
                 case true:
                 {
                     success = this->scroll_down();
+                    if(this->pos.whole < (this->display->size() - 1)) this->pos.whole++;
+                    if(this->pos.part < (this->wind.size - 1)) this->pos.part++;
                 }
                 break;
                 
                 case false:
                 {
-                    this->pos.part++;
+                    if(this->pos.part < (this->wind.size - 1)) this->pos.part++;
+                    if(this->pos.whole < (this->display->size() - 1)) this->pos.whole++;
                 }
                 break;
                 
@@ -178,42 +181,22 @@ namespace scrollDisplay
         bool success(false);
         if(this->display->size() > 0)
         {
-            switch(this->pos.part == (this->wind.size - 1))
+            switch(this->pos.whole >= (this->wind.size - 1))
             {
                 case true:
                 {
+                    this->pos.whole -= (this->wind.size - 1);
                     this->pos.part = 0;
-                    this->pos.whole = (this->wind.beg + this->pos.part);
+                    this->wind.beg = this->pos.whole;
+                    success = true;
                 }
                 break;
                 
                 case false:
                 {
-                    switch(this->pos.whole >= (this->wind.size - 1))
-                    {
-                        case true:
-                        {
-                            this->pos.whole -= (this->wind.size - 1);
-                            this->pos.part = 0;
-                            this->wind.beg = this->pos.whole;
-                            success = true;
-                        }
-                        break;
-                        
-                        case false:
-                        {
-                            this->pos.part = 0;
-                            this->pos.whole = 0;
-                            this->wind.beg = 0;
-                            success = true;
-                        }
-                        break;
-                        
-                        default:
-                        {
-                        }
-                        break;
-                    }
+                    this->pos.whole = 0;
+                    this->pos.part = 0;
+                    this->wind.beg = 0;
                 }
                 break;
                 
