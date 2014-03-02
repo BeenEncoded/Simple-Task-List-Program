@@ -32,6 +32,7 @@ namespace
         return t2;
     }
     
+    /* Retrieves the current time as a struct tm. */
     inline struct tm get_time()
     {
         struct tm *temptm;
@@ -43,6 +44,7 @@ namespace
         return *temptm;
     }
     
+    /* Makes it easier to use date_vals instead of struct tm. */
     inline date::date_val to_dv(const struct tm& t)
     {
         date::date_val d;
@@ -51,7 +53,9 @@ namespace
     }
     
     /* Asks for user input and only modifies the t1 variable if
-     the user doesn't cancel. */
+     the user doesn't cancel. Returns true/false based on whether or
+     not the user modified the variable.  Returns false if the
+     user canceled.*/
     template<class type1>
     inline bool user_input_string(type1& t1, const std::string& message)
     {
