@@ -11,7 +11,7 @@
 
 /* Control characters (int(char) == 27), as represented by a vector of multiple return codes: */
 #define LEFT_KEY std::vector<int>({27, 91, 68})
-#define RIGHT KEY std::vector<int>({27, 91, 67})
+#define RIGHT_KEY std::vector<int>({27, 91, 67})
 #define UP_KEY std::vector<int>({27, 91, 65})
 #define DOWN_KEY std::vector<int>({27, 91, 66})
 #define HOME_KEY std::vector<int>({27, 79, 72})

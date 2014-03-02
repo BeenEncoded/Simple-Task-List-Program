@@ -128,7 +128,7 @@ namespace scrollDisplay
                 
                 case false:
                 {
-                    this->part--;
+                    this->pos.part--;
                 }
                 break;
                 

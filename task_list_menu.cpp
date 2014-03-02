@@ -66,7 +66,7 @@ namespace
         temps = common::inp::get_user_string(message);
         if(temps != GSTRING_CANCEL)
         {
-            switch(is_fundamental<type1>::value)
+            switch(is_integral<type1>::value)
             {
                 case true:
                 {
@@ -84,7 +84,9 @@ namespace
                     {
                         case true:
                         {
-                            t1 = temps;
+                            {
+                                
+                            }
                             modified = true;
                         }
                         break;
@@ -110,6 +112,7 @@ namespace
             }
         }
         temps.erase();
+        return modified;
     }
     
     /* Modifies a date according to a specific operation on a specific
@@ -363,7 +366,7 @@ namespace taskListMenu
         
         bool modified(false), finished(false);
         vector<int> ch;
-        date_val tempdate;
+        date::date_val tempdate;
         
         do
         {
@@ -452,7 +455,7 @@ Current value: \"" + task.info.description + "\"\n\n\nEnter the Description: "))
                                     
                                     case '4':
                                     {
-                                        modified = user_input_string(task.info.priority, ("\
+                                        modified = user_input_string<short>(task.info.priority, std::string("\
 Currently set to: " + conv<short, std::string>(task.info.priority) + "\n\n\nEnter a priority (1-10): "));
                                     }
                                     break;
