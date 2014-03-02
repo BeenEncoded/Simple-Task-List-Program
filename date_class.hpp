@@ -7,6 +7,10 @@
 //testing required
 namespace date
 {
+    struct date_val;
+    
+    std::string display(const date_val&);
+    
     /* Used to apply math to dates.  Allows
      addition and subraction of days from/to
      dates.  Simple object to allow flexible manipulation

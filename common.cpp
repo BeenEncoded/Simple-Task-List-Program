@@ -57,6 +57,17 @@ namespace common
         return (is_letter(ch) || is_number(ch) || is_special(ch));
     }
     
+    void center(const std::string& s)
+    {
+        using namespace std;
+        
+        int max = (s.size() / 2);
+        max -= int(HCENTER);
+        if(max < 0) max = 0;
+        for(int x = 0; x < max; x++) cout<< " ";
+        cout<< s;
+    }
+    
     bool string_is_int(const std::string& s)
     {
         unsigned short count(0);

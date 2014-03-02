@@ -17,6 +17,7 @@ namespace common
     bool is_number(const char&);
     bool is_special(const char&);
     bool is_char(const char&);
+    void center(const std::string&);
     
     bool string_is_int(const std::string&);
     

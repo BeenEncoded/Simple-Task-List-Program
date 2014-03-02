@@ -76,6 +76,7 @@ namespace
     
 }
 
+/** Functions belonging to the date_val data structure:  */
 namespace date
 {
     
@@ -294,6 +295,20 @@ namespace date
         return day_names().at(this->weekday);
     }
     
+    
+}
+
+/** Other functions: */
+namespace date
+{
+    std::string display(const date_val& d)
+    {
+        std::string disp;
+        disp += month_names().at(d.month);
+        disp += (" " + conv<unsigned short, std::string>(d.mday) + ", ");
+        disp += conv<unsigned int, std::string>(d.year);
+        return disp;
+    }
     
 }
 
