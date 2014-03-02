@@ -45,6 +45,7 @@ namespace scrollDisplay
         
         std::vector<std::string> window();
         
+        const position_data& gpos() const;
         long &window_size()
         {
             return this->wind.size;

@@ -246,6 +246,11 @@ namespace scrollDisplay
         return success;
     }
     
+    const position_data& scroll_display_class::gpos() const
+    {
+        return this->pos;
+    }
+    
     
 }
 
