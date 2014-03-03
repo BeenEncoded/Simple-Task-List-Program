@@ -217,7 +217,7 @@ namespace scrollDisplay
         {
             if(this->pos.whole < this->display->size())
             {
-                switch((this->pos.whole + (this->wind.size - 1)) < this->display->size())
+                switch(unsigned(this->pos.whole + (this->wind.size - 1)) < this->display->size())
                 {
                     case true:
                     {

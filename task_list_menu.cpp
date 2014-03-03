@@ -66,7 +66,7 @@ namespace
         temps = common::inp::get_user_string(message);
         if(temps != GSTRING_CANCEL)
         {
-            switch(is_integral<type1>::value)
+            switch(is_fundamental<type1>::value)
             {
                 case true:
                 {
@@ -84,9 +84,12 @@ namespace
                     {
                         case true:
                         {
-                            {
-                                
-                            }
+                            /* @CHECK : This is dangerous, but necessary if this function is
+                             to work as intended.  I could not come up with anything 
+                             better...  This function does make the menus so
+                             much cleaner, and it would be a shame to remove the use
+                             of this function because of the reinterpret_cast<> alone.*/
+                            *(reinterpret_cast<string*>(&t1)) = temps;
                             modified = true;
                         }
                         break;
@@ -97,8 +100,6 @@ namespace
                         
                         default:
                         {
-                            //well... then what is it? (it's not a fundamental, and not a string!)
-                            assert((sizeof(type1) == sizeof(std::string)));
                         }
                         break;
                     }
