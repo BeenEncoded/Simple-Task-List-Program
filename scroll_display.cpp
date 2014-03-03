@@ -98,9 +98,6 @@ namespace scrollDisplay
     /* Keeps the window within the bounds of the display. */
     void scroll_display_class::sync()
     {
-        //never ever use any member function if the display is null!!
-        assert(this->display != std::nullptr_t);
-        
         //make sure the beg is within defined bounds
         if(this->wind.size > 0)
         {

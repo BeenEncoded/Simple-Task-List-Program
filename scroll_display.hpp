@@ -4,7 +4,6 @@
 #include <string>
 
 #include "global_defines.hpp"
-#include <assert.h>
 
 namespace scrollDisplay
 {
@@ -49,6 +48,11 @@ namespace scrollDisplay
         long &window_size()
         {
             return this->wind.size;
+        }
+        
+        const int& window_beg() const
+        {
+            return this->wind.beg;
         }
         
     private:
