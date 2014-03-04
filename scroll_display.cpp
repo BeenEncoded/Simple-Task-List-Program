@@ -44,10 +44,13 @@ namespace scrollDisplay
         bool success(false);
         if(this->wind.size > 0)
         {
-            if(((unsigned)this->wind.beg + ((unsigned)this->wind.size - 1)) < this->display->size())
+            if(this->end_pos() > 0)
             {
-                this->wind.beg++;
-                success = true;
+                if((unsigned(this->end_pos()) + 1) < this->display->size())
+                {
+                    this->wind.beg++;
+                    success = true;
+                }
             }
         }
         return success;
@@ -60,10 +63,13 @@ namespace scrollDisplay
         bool success(false);
         if(this->wind.size > 0)
         {
-            if(((unsigned)this->wind.beg + (2 * ((unsigned)this->wind.size - 1))) < this->display->size())
+            if(this->end_pos() > 0)
             {
-                success = true;
-                this->wind.beg += (this->wind.size - 1);
+                if(unsigned((this->end_pos() + (this->wind.size - 1))) < this->display->size())
+                {
+                    success = true;
+                    this->wind.beg += (this->wind.size - 1);
+                }
             }
         }
         return success;
@@ -74,10 +80,29 @@ namespace scrollDisplay
     {
         this->sync();
         bool success(false);
-        if(this->wind.beg >= (this->wind.size - 1))
+        switch(this->wind.beg >= (this->wind.size - 1))
         {
-            success = true;
-            this->wind.beg -= (this->wind.size - 1);
+            case true:
+            {
+                success = true;
+                this->wind.beg -= (this->wind.size - 1);
+            }
+            break;
+            
+            case false:
+            {
+                if(this->wind.beg != 0)
+                {
+                    this->wind.beg = 0;
+                    success = true;
+                }
+            }
+            break;
+            
+            default:
+            {
+            }
+            break;
         }
         return success;
     }
@@ -95,16 +120,36 @@ namespace scrollDisplay
         return tempv;
     }
     
-    /* Keeps the window within the bounds of the display. */
+    /* Keeps the window within the bounds of the display, the
+     display the proper size, and the positions within bounds. */
     void scroll_display_class::sync()
     {
         //make sure the beg is within defined bounds
         if(this->wind.size > 0)
         {
-            if(((unsigned)this->wind.beg + ((unsigned)this->wind.size - 1)) >= this->display->size())
+            //make sure the current position is within the vector:
+            while(this->pos.whole >= this->display->size()) this->pos.whole--;
+            
+            //make sure the current position is in the field of view:
+            while(this->pos.whole < this->wind.beg)
             {
-                this->wind.beg = (this->display->size() - this->wind.size);
+                this->wind.beg--;
             }
+            while(this->pos.whole > this->end_pos())
+            {
+                this->wind.beg++;
+            }
+            
+            //reset the part position:
+            this->pos.part = (this->pos.whole - this->wind.beg);
+            
+            //make sure that we can always have a full window, within the vector's bounds:
+            while((unsigned(this->end_pos()) == (this->display->size() - 1)) && (this->current_wsize() < this->wind.size))
+            {
+                this->wind.beg--;
+            }
+            
+            //correct if beg is < 0
             if(this->wind.beg < 0) this->wind.beg = 0;
         }
     }
@@ -115,27 +160,11 @@ namespace scrollDisplay
         bool success(false);
         if(this->display->size() > 0)
         {
-            switch(this->pos.part == 0)
+            if(this->pos.whole > 0)
             {
-                case true:
-                {
-                    success = this->scroll_up();
-                }
-                break;
-                
-                case false:
-                {
-                    this->pos.part--;
-                }
-                break;
-                
-                default:
-                {
-                }
-                break;
+                this->pos.whole--;
             }
         }
-        this->pos.whole = (this->pos.part + this->wind.beg);
         return success;
     }
     
@@ -145,29 +174,12 @@ namespace scrollDisplay
         bool success(false);
         if(this->display->size() > 0)
         {
-            switch(this->pos.part == (this->wind.size - 1))
+            if((this->pos.whole + 1) < this->display->size())
             {
-                case true:
-                {
-                    success = this->scroll_down();
-                    if(this->pos.whole < (this->display->size() - 1)) this->pos.whole++;
-                    if(this->pos.part < (this->wind.size - 1)) this->pos.part++;
-                }
-                break;
-                
-                case false:
-                {
-                    if(this->pos.part < (this->wind.size - 1)) this->pos.part++;
-                    if(this->pos.whole < (this->display->size() - 1)) this->pos.whole++;
-                }
-                break;
-                
-                default:
-                {
-                }
-                break;
+                this->pos.whole++;
+                this->sync();
+                success = true;
             }
-            this->pos.whole = (this->wind.beg + this->pos.part);
         }
         return success;
     }
@@ -178,29 +190,11 @@ namespace scrollDisplay
         bool success(false);
         if(this->display->size() > 0)
         {
-            switch(this->pos.whole >= (this->wind.size - 1))
+            if(this->pos.whole >= (this->wind.size - 1))
             {
-                case true:
-                {
-                    this->pos.whole -= (this->wind.size - 1);
-                    this->pos.part = 0;
-                    this->wind.beg = this->pos.whole;
-                    success = true;
-                }
-                break;
-                
-                case false:
-                {
-                    this->pos.whole = 0;
-                    this->pos.part = 0;
-                    this->wind.beg = 0;
-                }
-                break;
-                
-                default:
-                {
-                }
-                break;
+                this->pos.whole -= (this->wind.size - 1);
+                this->sync();
+                success = true;
             }
         }
         return success;
@@ -212,39 +206,19 @@ namespace scrollDisplay
         bool success(false);
         if(this->display->size() > 0)
         {
-            if(this->pos.whole < this->display->size())
+            if(unsigned(((this->display->size() - 1) - this->pos.whole)) >= (this->wind.size - 1))
             {
-                switch(unsigned(this->pos.whole + (this->wind.size - 1)) < this->display->size())
-                {
-                    case true:
-                    {
-                        this->pos.whole += (this->wind.size - 1);
-                        this->pos.part = (this->wind.size - 1);
-                        this->wind.beg = (this->pos.whole - (this->wind.size - 1));
-                        success = true;
-                    }
-                    break;
-                    
-                    case false:
-                    {
-                        this->pos.whole = (this->display->size() - this->wind.size);
-                        this->wind.beg = (this->display->size() - this->wind.size);
-                        this->pos.part = (this->wind.size - 1);
-                    }
-                    break;
-                    
-                    default:
-                    {
-                    }
-                    break;
-                }
+                this->pos.whole += (this->wind.size - 1);
+                success = true;
+                this->sync();
             }
         }
         return success;
     }
     
-    const position_data& scroll_display_class::gpos() const
+    const position_data& scroll_display_class::gpos()
     {
+        this->sync();
         return this->pos;
     }
     

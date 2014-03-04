@@ -11,12 +11,29 @@ namespace scrollDisplay
     
     struct window_data
     {
-        int beg = 0;
-        signed long size = 15;
+        void operator=(const window_data& wd)
+        {
+            if(this != & wd)
+            {
+                this->beg = wd.beg;
+                this->size = wd.size;
+            }
+        }
+        
+        signed long size = 15, beg = 0;
     };
     
     struct position_data
     {
+        void operator=(const position_data& pd)
+        {
+            if(this != &pd)
+            {
+                this->part = pd.part;
+                this->whole = pd.whole;
+            }
+        }
+        
         short part = 0;
         unsigned int whole = 0;
     };
@@ -31,11 +48,23 @@ namespace scrollDisplay
                     wind(),
                     pos()
         {
-            //no one should have to give this thing a null pointer...
-            assert(d != std::nullptr_t);  //if you're using a null pointer, you're doing it wrong!
+            if(&d == NULL)
+            {
+                throw "explicit scroll_display_class(std::vector<std::string> d) : display(&d), wind(), pos()  ERROR: Null argument!";
+            }
         }
         
         ~scroll_display_class(){}
+        
+        void operator=(const scroll_display_class& sdc)
+        {
+            if(this != &sdc)
+            {
+                this->display = sdc.display;
+                this->pos = sdc.pos;
+                this->wind = sdc.wind;
+            }
+        }
         
         bool mv_up();
         bool mv_down();
@@ -44,14 +73,15 @@ namespace scrollDisplay
         
         std::vector<std::string> window();
         
-        const position_data& gpos() const;
+        const position_data& gpos();
         long &window_size()
         {
             return this->wind.size;
         }
         
-        const int& window_beg() const
+        const signed long& window_beg()
         {
+            this->sync();
             return this->wind.beg;
         }
         
@@ -65,6 +95,33 @@ namespace scrollDisplay
         bool scroll_down();
         bool scroll_pg_up();
         bool scroll_pg_down();
+        
+        /* Calculates the last possible index that can
+         be safely referenced from the pointed vector, based on where the window
+         is positioned.*/
+        signed long end_pos() const
+        {
+            signed long temp(this->wind.beg + (this->wind.size - 1));
+            if(temp > 0)
+            {
+                while(unsigned(temp) >= this->display->size()) temp--;
+            }
+            if(temp < this->wind.beg)
+            {
+                throw "Error:  signed long end_pos() const (end_pos < wind.begin)!!!";
+            }
+            return temp;
+        }
+        
+        /* Returns the size of the window which has been "resized"
+         to fit within the pointed vector.  Does not reflect
+         the value of wind.size.  (this should be <= wind.size)*/
+        signed long current_wsize() const
+        {
+            return ((this->end_pos() - this->wind.beg) + 1);
+        }
+        
+        
     };
     
     
