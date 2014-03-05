@@ -1,7 +1,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <assert.h>
 
 #include "scroll_display.hpp"
 
@@ -113,9 +112,12 @@ namespace scrollDisplay
         this->sync();
         using namespace std;
         vector<string> tempv;
-        for(unsigned int x = this->wind.beg; x <= this->end_pos(); x++)
+        if(this->wind.size > 0)
         {
-            tempv.push_back(this->display->at(x));
+            for(unsigned int x = this->wind.beg; x <= this->end_pos(); x++)
+            {
+                tempv.push_back(this->display->at(x));
+            }
         }
         return tempv;
     }
@@ -124,31 +126,36 @@ namespace scrollDisplay
      display the proper size, and the positions within bounds. */
     void scroll_display_class::sync()
     {
-        assert(this->display != NULL); //a null display would be VERY bad indeed...
+        if(this->wind.size < 0) this->wind.size *= (-1);
+        assert(this->display == NULL);
+        
+        if(this->display->size() == 0)
+        {
+            this->wind.beg = 0;
+            this->pos.whole = 0;
+            this->pos.part = 0;
+        }
         
         //make sure the beg is within defined bounds
-        if(this->wind.size > 0)
+        if((this->wind.size > 0) && (this->display->size() > 0))
         {
             //make sure the current position is within the vector:
-            while(this->pos.whole >= this->display->size()) this->pos.whole--;
+            if(this->pos.whole >= this->display->size()) this->pos.whole = (this->display->size() - 1);
             
             //make sure the current position is in the field of view:
-            while(this->pos.whole < this->wind.beg)
+            if(this->pos.whole < this->wind.beg) this->wind.beg = this->pos.whole;
+            if((this->pos.whole > this->end_pos()) && (this->end_pos() > 0))
             {
-                this->wind.beg--;
-            }
-            while(this->pos.whole > this->end_pos())
-            {
-                this->wind.beg++;
+                this->wind.beg = (this->pos.whole - (this->wind.size - 1));
             }
             
             //reset the part position:
             this->pos.part = (this->pos.whole - this->wind.beg);
             
             //make sure that we can always have a full window, within the vector's bounds:
-            while((unsigned(this->end_pos()) == (this->display->size() - 1)) && (this->current_wsize() < this->wind.size))
+            if((unsigned(this->end_pos()) == (this->display->size() - 1)) && (this->current_wsize() < this->wind.size))
             {
-                this->wind.beg--;
+                this->wind.beg = (this->display->size() - this->wind.size);
             }
             
             //correct if beg is < 0

@@ -52,7 +52,7 @@ namespace scrollDisplay
                     wind(),
                     pos()
         {
-            assert(&d != NULL); //that would be VERY bad...
+            assert(&d == NULL)
         }
         
         ~scroll_display_class(){}
@@ -61,6 +61,7 @@ namespace scrollDisplay
         {
             if(this != &sdc)
             {
+                assert(sdc.display == NULL);
                 this->display = sdc.display;
                 this->pos = sdc.pos;
                 this->wind = sdc.wind;
@@ -82,6 +83,7 @@ namespace scrollDisplay
         
         const signed long& window_beg()
         {
+            assert(this->display == NULL);
             this->sync();
             return this->wind.beg;
         }
@@ -102,15 +104,34 @@ namespace scrollDisplay
          is positioned.*/
         signed long end_pos() const
         {
-            assert(this->display != NULL);
+            assert((this->display == NULL);
             signed long temp(this->wind.beg + (this->wind.size - 1));
-            if(temp > 0)
+            switch(this->display->size() > 0)
             {
-                while(unsigned(temp) >= this->display->size()) temp--;
-            }
-            if(temp < this->wind.beg)
-            {
-                throw "Error:  signed long end_pos() const (end_pos < wind.begin)!!!";
+                case true:
+                {
+                    if(temp > 0)
+                    {
+                        if(unsigned(temp) >= this->display->size()) temp = (this->display->size() - 1);
+                    }
+                    if(temp < this->wind.beg)
+                    {
+                        throw "Error:  signed long end_pos() const (end_pos < wind.begin)!!!";
+                    }
+                }
+                break;
+                
+                case false:
+                {
+                    temp = (-1);
+                }
+                break;
+                
+                default:
+                {
+                    temp = (-1);
+                }
+                break;
             }
             return temp;
         }
