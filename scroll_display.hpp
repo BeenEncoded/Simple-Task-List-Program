@@ -2,6 +2,7 @@
 #define SCROLL_DISPLAY_HPP_INCLUDED
 #include <vector>
 #include <string>
+#include <assert.h>
 
 #include "global_defines.hpp"
 
@@ -43,15 +44,15 @@ namespace scrollDisplay
     class scroll_display_class
     {
     public:
-        explicit scroll_display_class() : display(NULL), wind(), pos() {}
-        explicit scroll_display_class(std::vector<std::string> d) : display(&d),
+        explicit scroll_display_class() : display(NULL), 
+                wind(), 
+                pos() {}
+        
+        explicit scroll_display_class(std::vector<std::string>& d) : display(&d),
                     wind(),
                     pos()
         {
-            if(&d == NULL)
-            {
-                throw "explicit scroll_display_class(std::vector<std::string> d) : display(&d), wind(), pos()  ERROR: Null argument!";
-            }
+            assert(&d != NULL); //that would be VERY bad...
         }
         
         ~scroll_display_class(){}
@@ -101,6 +102,7 @@ namespace scrollDisplay
          is positioned.*/
         signed long end_pos() const
         {
+            assert(this->display != NULL);
             signed long temp(this->wind.beg + (this->wind.size - 1));
             if(temp > 0)
             {

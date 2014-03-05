@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <assert.h>
 
 #include "scroll_display.hpp"
 
@@ -112,8 +113,7 @@ namespace scrollDisplay
         this->sync();
         using namespace std;
         vector<string> tempv;
-        for(unsigned int x = this->wind.beg; 
-                ((x < (this->wind.beg + this->wind.size)) && (x < this->display->size())); x++)
+        for(unsigned int x = this->wind.beg; x <= this->end_pos(); x++)
         {
             tempv.push_back(this->display->at(x));
         }
@@ -124,6 +124,8 @@ namespace scrollDisplay
      display the proper size, and the positions within bounds. */
     void scroll_display_class::sync()
     {
+        assert(this->display != NULL); //a null display would be VERY bad indeed...
+        
         //make sure the beg is within defined bounds
         if(this->wind.size > 0)
         {
