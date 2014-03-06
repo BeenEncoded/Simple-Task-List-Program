@@ -264,6 +264,8 @@ namespace
             common::cls();
             for(char x = 0; x < VCENTER; x++) cout<< endl;
             
+            disp.erase();
+            
             //create string display for user:
             disp += ("(" + d.wday_name() + ")   ");
             if(targ == 0) disp += "[";
@@ -272,8 +274,8 @@ namespace
             disp += " ";
             
             if(targ == 1) disp += "[";
-            if(d.mday < 10) disp += "0";
-            disp += conv<unsigned short, std::string>(d.mday);
+            if((d.mday + 1) < 10) disp += "0";
+            disp += conv<unsigned short, std::string>((d.mday + 1));
             if(targ == 1) disp += "]";
             disp += ", ";
             
