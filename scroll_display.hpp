@@ -52,7 +52,7 @@ namespace scrollDisplay
                     wind(),
                     pos()
         {
-            assert(&d == NULL);
+            assert(&d != NULL);
         }
         
         ~scroll_display_class(){}
@@ -61,7 +61,7 @@ namespace scrollDisplay
         {
             if(this != &sdc)
             {
-                assert(sdc.display == NULL);
+                assert(sdc.display != NULL);
                 this->display = sdc.display;
                 this->pos = sdc.pos;
                 this->wind = sdc.wind;
@@ -83,7 +83,7 @@ namespace scrollDisplay
         
         const signed long& window_beg()
         {
-            assert(this->display == NULL);
+            assert(this->display != NULL);
             this->sync();
             return this->wind.beg;
         }
@@ -104,7 +104,7 @@ namespace scrollDisplay
          is positioned.*/
         signed long end_pos() const
         {
-            assert(this->display == NULL);
+            assert(this->display != NULL);
             signed long temp(this->wind.beg + (this->wind.size - 1));
             switch(this->display->size() > 0)
             {

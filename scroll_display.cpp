@@ -127,7 +127,7 @@ namespace scrollDisplay
     void scroll_display_class::sync()
     {
         if(this->wind.size < 0) this->wind.size *= (-1);
-        assert(this->display == NULL);
+        assert(this->display != NULL);
         
         if(this->display->size() == 0)
         {
