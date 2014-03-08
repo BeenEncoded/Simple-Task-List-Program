@@ -209,36 +209,39 @@ namespace
             
             case 2:
             {
-                day = d.mday;
-                mon = d.month;
-                year = d.year;
-                
-                //op > 0, add 1 year, otherwise subract 1 year
-                switch(op > 0)
+                if((d.year > 0) && (d.year < 10000)) //limit the max/min year value.
                 {
-                    case true:
+                    day = d.mday;
+                    mon = d.month;
+                    year = d.year;
+
+                    //op > 0, add 1 year, otherwise subract 1 year
+                    switch(op > 0)
                     {
-                        d += (YDAYS(year) - d.yday);
-                        while(d.month != 0) d++;
+                        case true:
+                        {
+                            d += (YDAYS(year) - d.yday);
+                            while(d.month != 0) d++;
+                        }
+                        break;
+
+                        case false:
+                        {
+                            d -= (YDAYS(year) + 1);
+                            while((d.month > 0) || (d.mday > 0)) d--;
+                        }
+                        break;
+
+                        default:
+                        {
+                        }
+                        break;
                     }
-                    break;
-                    
-                    case false:
-                    {
-                        d -= (YDAYS(year) + 1);
-                        while((d.month > 0) || (d.mday > 0)) d--;
-                    }
-                    break;
-                    
-                    default:
-                    {
-                    }
-                    break;
+
+                    //the result should be +/- 1 year, but we should be at month 0, mday 0.
+                    while(d.month < mon) d++;
+                    while((d.mday < day) && ((d + 1).month == mon)) d++;
                 }
-                
-                //the result should be +/- 1 year, but we should be at month 0, mday 0.
-                while(d.month < mon) d++;
-                while((d.mday < day) && ((d + 1).month == mon)) d++;
             }
             break;
             
@@ -267,7 +270,6 @@ namespace
             disp.erase();
             
             //create string display for user:
-            disp += ("(" + d.wday_name() + ")   ");
             if(targ == 0) disp += "[";
             disp += d.month_name();
             if(targ == 0) disp += "]";
@@ -282,11 +284,13 @@ namespace
             if(targ == 2) disp += "[";
             disp += conv<unsigned int, std::string>(d.year);
             if(targ == 2) disp += "]";
+            disp += ("   (" + d.wday_name() + ")");
             
             
             common::center(disp);
             cout<< endl;
             for(char x = 0; x < 3; x++) cout<< endl;
+            if(d != to_dv(get_time())) cout<< " T -  Goto today"<< endl;
             cout<< "[ENTER] -  Done"<< endl;
             cout<< "[BACKSPACE] -  Cancel"<< endl;
             
@@ -335,6 +339,14 @@ namespace
                             }
                             break;
                             
+                            case 't': case 'T':
+                            {
+                                if(to_dv(get_time()) != d)
+                                {
+                                    d = to_dv(get_time());
+                                }
+                            }
+                            
                             default:
                             {
                             }
@@ -375,18 +387,22 @@ namespace taskListMenu
         {
             cls();
             cout<< endl;
-            center("Modify Task");
+            common::center("Modify Task");
             cout<< endl;
             for(char x = 0; x < 3; x++) cout<< endl;
             
             cout<< " 1 --------  Name: \""<< task.info.name<< "\""<< endl;
             cout<< " 2 -  Description: \""<< task.info.description<< "\""<< endl;
             cout<< " 3 --------  Date: ";
+            if(to_dv(task.info.ddate.t) != tempdate)
+            {
+                tempdate = task.info.ddate.t;
+            }
+            
             switch(task.info.ddate.on)
             {
                 case true:
                 {
-                    if(to_dv(task.info.ddate.t) != tempdate) tempdate = task.info.ddate.t;
                     cout<< date::display(tempdate);
                 }
                 break;
@@ -404,8 +420,8 @@ namespace taskListMenu
                 break;
             }
             cout<< endl;
-            
-            cout<< " 4 ----  Priority: "<< task.info.priority<< endl;
+            cout<< " 4 ----  Toggle due date: "<< (task.info.ddate.on ? "ON" : "OFF")<< endl;
+            cout<< " 5 ----  Priority: "<< task.info.priority<< endl;
             
             cout<< " [ENTER] -----  Done"<< endl;
             cout<< " [BACKSPACE] -  Cancel"<< endl;
@@ -426,8 +442,12 @@ namespace taskListMenu
                                 {
                                     case '1':
                                     {
-                                        modified = user_input_string(task.info.name, ("Current \
-value: \"" + task.info.name + "\"\n\n\nEnter the name: "));
+                                        if(user_input_string(task.info.name, ("[END] -  Cancel\n\n\nCurrent \
+value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
+                                        {
+                                            modified = true;
+                                        }
+                                        
                                         if(task.info.name.size() > 40)
                                         {
                                             task.info.name.resize(40 - 3);
@@ -438,8 +458,11 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: "));
                                     
                                     case '2':
                                     {
-                                        modified = user_input_string(task.info.description, ("\
-Current value: \"" + task.info.description + "\"\n\n\nEnter the Description: "));
+                                        if(user_input_string(task.info.description, ("\
+[END] -  Cancel\n\n\nCurrent value: \"" + task.info.description + "\"\n\n\nEnter the Description: ")))
+                                        {
+                                            modified = true;
+                                        }
                                         
                                         //I think 2Kb is a reasonable limit...
                                         if(task.info.description.size() > 2000)
@@ -452,14 +475,33 @@ Current value: \"" + task.info.description + "\"\n\n\nEnter the Description: "))
                                     
                                     case '3':
                                     {
-                                        //modify date
+                                        if(modify_date(tempdate))
+                                        {
+                                            modified = true;
+                                            tempdate.to_tm(task.info.ddate.t);
+                                        }
                                     }
                                     break;
                                     
                                     case '4':
                                     {
-                                        modified = user_input_string<short>(task.info.priority, std::string("\
-Currently set to: " + conv<short, std::string>(task.info.priority) + "\n\n\nEnter a priority (1-10): "));
+                                        task.info.ddate.on = !task.info.ddate.on;
+                                        modified = true;
+                                    }
+                                    break;
+                                    
+                                    case '5':
+                                    {
+                                        if(user_input_string<short>(task.info.priority, std::string("\
+[END] -  Cancel\n\n\nCurrently set to: " + conv<short, std::string>(task.info.priority) + "\n\n\nEnter a priority (1-10): ")))
+                                        {
+                                            if(task.info.priority < 0)
+                                            {
+                                                task.info.priority *= (-1);
+                                            }
+                                            if(task.info.priority > 10) task.info.priority = 10;
+                                            modified = true;
+                                        }
                                     }
                                     break;
                                     

@@ -148,7 +148,7 @@ namespace date
         i.tm_mon = this->month;
         i.tm_mday = (this->mday + 1);
         assert(this->year > 1900);
-        i.tm_year = (1900 - this->year);
+        i.tm_year = (this->year - 1900);
         i.tm_yday = this->yday;
         i.tm_wday = this->weekday;
     }
@@ -305,7 +305,7 @@ namespace date
     {
         std::string disp;
         disp += month_names().at(d.month);
-        disp += (" " + conv<unsigned short, std::string>(d.mday) + ", ");
+        disp += (" " + conv<unsigned short, std::string>((d.mday + 1)) + ", ");
         disp += conv<unsigned int, std::string>(d.year);
         return disp;
     }
