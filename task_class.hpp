@@ -2,15 +2,28 @@
 #define TASK_CLASS_HPP_INCLUDED
 #include <time.h>
 #include <string>
-#include <fstream>
+#include <iostream>
 
 /** Task_class may not be much, but operators and other functions may be
  added in the future.*/
+
+std::ostream& operator<<(std::ostream&, struct tm&);
+std::istream& operator>>(std::istream&, struct tm&);
+
 namespace taskList
 {
     class task_class;
     struct due_date_data;
     struct task_data;
+    
+    std::ostream& operator<<(std::ostream&, task_class&);
+    std::istream& operator>>(std::istream&, task_class&);
+
+    std::istream& operator>>(std::istream&, taskList::due_date_data&);
+    std::ostream& operator<<(std::ostream&, taskList::due_date_data&);
+
+    std::ostream& operator<<(std::ostream&, taskList::task_data&);
+    std::istream& operator>>(std::istream&, taskList::task_data&);
     
     struct due_date_data
     {
@@ -63,20 +76,14 @@ namespace taskList
             }
         }
         
+        friend std::ostream& operator<<(std::ostream&, taskList::task_class&);
+        friend std::istream& operator>>(std::istream&, taskList::task_class&);
+        
         task_data info;
         
     };
     
     
 }
-
-std::ostream& operator<<(std::ostream&, struct tm&);
-std::istream& operator>>(std::istream&, struct tm&);
-
-std::ifstream& operator>>(std::ifstream&, taskList::due_date_data&);
-std::ofstream& operator<<(std::ofstream&, taskList::due_date_data&);
-
-std::ofstream& operator<<(std::ofstream&, taskList::task_data&);
-std::ifstream& operator>>(std::ifstream&, taskList::task_data&);
 
 #endif

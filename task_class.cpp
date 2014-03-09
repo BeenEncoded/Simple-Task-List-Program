@@ -91,38 +91,54 @@ std::istream& operator>>(std::istream& in, tm& t)
     return in;
 }
 
-std::ofstream& operator<<(std::ofstream& out, taskList::due_date_data& ddd)
+namespace taskList
 {
-    out<< ddd.on<< '\0';
-    out<< ddd.t;
-    return out;
-}
-
-std::ifstream& operator>>(std::ifstream& in, taskList::due_date_data& ddd)
-{
-    if(safe_getline(in, ddd.on, '\0'))
+    
+    std::ostream& operator<<(std::ostream& out, taskList::due_date_data& ddd)
     {
-        in>> ddd.t;
+        out<< ddd.on<< '\0';
+        out<< ddd.t;
+        return out;
     }
-    return in;
+
+    std::istream& operator>>(std::istream& in, taskList::due_date_data& ddd)
+    {
+        if(safe_getline(in, ddd.on, '\0'))
+        {
+            in>> ddd.t;
+        }
+        return in;
+    }
+
+    std::ostream& operator<<(std::ostream& out, taskList::task_data& task)
+    {
+        out<< task.ddate;
+        out<< task.name<< '\0';
+        out<< task.description<< '\0';
+        out<< task.priority<< '\0';
+        return out;
+    }
+
+    std::istream& operator>>(std::istream& in, taskList::task_data& task)
+    {
+        in>> task.ddate;
+        if(!safe_getline(in, task.name, '\0')) return in;
+        if(!safe_getline(in, task.description, '\0')) return in;
+        (void)safe_getline(in, task.priority, '\0');
+        return in;
+    }
+
+    std::ostream& operator<<(std::ostream& out, taskList::task_class& task)
+    {
+        out<< task.info;
+        return out;
+    }
+
+    std::istream& operator>>(std::istream& in, taskList::task_class& task)
+    {
+        in>> task.info;
+        return in;
+    }
+    
+    
 }
-
-std::ofstream& operator<<(std::ofstream& out, taskList::task_data& task)
-{
-    out<< task.ddate;
-    out<< task.name<< '\0';
-    out<< task.description<< '\0';
-    out<< task.priority<< '\0';
-    return out;
-}
-
-std::ifstream& operator>>(std::ifstream& in, taskList::task_data& task)
-{
-    in>> task.ddate;
-    if(!safe_getline(in, task.name, '\0')) return in;
-    if(!safe_getline(in, task.description, '\0')) return in;
-    (void)safe_getline(in, task.priority, '\0');
-    return in;
-}
-
-
