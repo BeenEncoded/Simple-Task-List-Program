@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <time.h>
+#include <vector>
 #include <type_traits>
 
 #include "task_list_menu.hpp"
@@ -557,6 +558,23 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
         return modified;
     }
     
-    
+    void task_list_menu()
+    {
+        using namespace common;
+        vector<int> ch;
+        bool finished(false);
+        
+        do
+        {
+            cls();
+            cout<< endl;
+            center("Task List: ");
+            cout<< endl;
+            for(char x = 0; x < 3; x++) cout<< '\n';
+            
+        }while(!finished);
+        
+        //function end
+    }
 }
 
