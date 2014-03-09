@@ -2,12 +2,15 @@
 #define TASK_CLASS_HPP_INCLUDED
 #include <time.h>
 #include <string>
+#include <fstream>
 
 /** Task_class may not be much, but operators and other functions may be
  added in the future.*/
 namespace taskList
 {
     class task_class;
+    struct due_date_data;
+    struct task_data;
     
     struct due_date_data
     {
@@ -22,7 +25,6 @@ namespace taskList
                 this->t = ddd.t;
             }
         }
-        
         
     };
     
@@ -67,5 +69,14 @@ namespace taskList
     
     
 }
+
+std::ostream& operator<<(std::ostream&, struct tm&);
+std::istream& operator>>(std::istream&, struct tm&);
+
+std::ifstream& operator>>(std::ifstream&, taskList::due_date_data&);
+std::ofstream& operator<<(std::ofstream&, taskList::due_date_data&);
+
+std::ofstream& operator<<(std::ofstream&, taskList::task_data&);
+std::ifstream& operator>>(std::ifstream&, taskList::task_data&);
 
 #endif
