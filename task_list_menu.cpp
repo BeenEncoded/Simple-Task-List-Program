@@ -4,6 +4,7 @@
 #include <time.h>
 #include <vector>
 #include <type_traits>
+#include <functional>
 
 #include "task_list_menu.hpp"
 #include "common.hpp"
@@ -21,6 +22,7 @@ namespace
     date::date_val to_dv(const struct tm&);
     bool modify_date(date::date_val&);
     void mod_date(date::date_val&, const char&, const int&);
+    void create_task_display(const vector<taskList::task_class>&, vector<string>&);
     
     
     template<class type1, class type2>
@@ -371,6 +373,155 @@ namespace
     
 }
 
+namespace taskDisplay
+{
+#define METHOD_MAX 3
+    enum sort_method{
+        none = 0,
+        date = 1,
+        name = 2,
+        priority = 3
+    };
+    
+    
+    void create_task_display(const vector<taskList::task_class>&, vector<string>&);
+    bool sort_compare(const taskList::task_class&, const taskList::task_class&, const sort_method&);
+    bool compare_by_date(const taskList::task_class&, const taskList::task_class&);
+    bool compare_by_name(const taskList::task_class&, const taskList::task_class&);
+    bool no_compare(const taskList::task_class&, const taskList::task_class&);
+    bool compare_by_priority(const taskList::task_class&, const taskList::task_class&);
+    void sort_tasklist(taskList::task_class&, const sort_method&);
+    void display_tasks(const vector<taskList::task_class>&, scrollDisplay::scroll_display_class&);
+    
+    
+    
+    bool no_compare(const taskList::task_class& task1, const taskList::task_class& task2)
+    {
+        return true;
+    }
+    
+    bool compare_by_date(const taskList::task_class& task1, const taskList::task_class& task2)
+    {
+        date::date_val d1, d2;
+        d1 = task1.info.ddate.t;
+        d2 = task1.info.ddate.t;
+        return (d1 < d2);
+    }
+    
+    bool compare_by_name(const taskList::task_class& task1, const taskList::task_class& task2)
+    {
+        return (task1.info.name < task2.info.name);
+    }
+    
+    bool compare_by_priority(const taskList::task_class& task1, const taskList::task_class& task2)
+    {
+        return (task1.info.priority < task2.info.priority);
+    }
+    
+    inline bool sort_compare(const taskList::task_class& task1, const taskList::task_class& task2, const sort_method& method)
+    {
+        sort_method temp_meth(none);
+        bool lessthan(false);
+        function<bool(const taskList::task_class&, const taskList::task_class&)> compare_function[4] = {
+            no_compare,
+            compare_by_date,
+            compare_by_name,
+            compare_by_priority
+        };
+        return compare_function[method](task1, task2);
+    }
+    
+    inline void sort_tasklist(vector<taskList::task_class>& tasks, const sort_method& method)
+    {
+        if(tasks.size() > 1)
+        {
+            taskList::task_class temptask(*tasks.begin());
+            tasks.erase(tasks.begin());
+            for(vector<taskList::task_class>::iterator it = tasks.begin(); it != tasks.end(); it++)
+            {
+                if(sort_compare(*it, temptask, method))
+                {
+                    swap(*it, temptask);
+                }
+            }
+            
+            sort_tasklist(tasks, method);
+            
+            /* Based on the sorting method, we will want to
+             use different ordering: */
+            switch(method)
+            {
+                //greatest -> least
+                case date:
+                case priority:
+                {
+                    tasks.push_back(temptask);
+                }
+                break;
+                
+                //least -> greatest
+                case name:
+                {
+                    tasks.insert(tasks.begin(), temptask);
+                }
+                break;
+                
+                default:
+                {
+                    tasks.insert(tasks.begin(), temptask);
+                }
+                break;
+            }
+        }
+    }
+    
+    inline void create_task_display(const vector<taskList::task_class>& tasks, vector<string>& disp_list)
+    {
+        disp_list.erase(disp_list.begin(), disp_list.end());
+        if(tasks.size() > 0)
+        {
+            for(vector<taskList::task_class>::const_iterator it = tasks.begin(); it != tasks.end(); ++it)
+            {
+                disp_list.push_back(it->info.name);
+            }
+        }
+    }
+    
+    inline void display_tasks(const vector<taskList::task_class>& tasks, scrollDisplay::scroll_display_class& display)
+    {
+        date::date_val d1, d2;
+        d2 = get_time();
+        for(char x = 0; x < display.window_size(); x++)
+        {
+            d1 = tasks.at(display.window_beg() + x).info.ddate.t;
+            if(d1 == d2) cout<< " *";
+            if(d1 < d2) cout<< ">>";
+            switch(x == display.gpos().part)
+            {
+                case true:
+                {
+                    cout<< "["<< display.window()[x]<< "]";
+                }
+                break;
+
+                case false:
+                {
+                    cout<< " "<< display.window()[x];
+                }
+                break;
+
+                default:
+                {
+                }
+                break;
+            }
+            cout<< endl;
+        }
+    }
+    
+    
+}
+
 namespace taskListMenu
 {
     /* Returns true/false respectively based on whether it was modified. 
@@ -563,6 +714,13 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
         using namespace common;
         vector<int> ch;
         bool finished(false);
+        scrollDisplay::scroll_display_class display;
+        vector<string> display_list;
+        vector<taskList::task_class> tasks;
+        
+        display = scrollDisplay::scroll_display_class(display_list);
+        taskDisplay::create_task_display(tasks, display_list);
+        display.window_size() = 15;
         
         do
         {
@@ -571,6 +729,7 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
             center("Task List: ");
             cout<< endl;
             for(char x = 0; x < 3; x++) cout<< '\n';
+            taskDisplay::display_tasks(tasks, display);
             
         }while(!finished);
         
