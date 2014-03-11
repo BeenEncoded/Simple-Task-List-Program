@@ -11,7 +11,7 @@
 
 /* Control characters (int(char) == 27), as represented by a vector of multiple return codes: */
 #define LEFT_KEY std::vector<int>({27, 91, 68})
-#define RIGHT KEY std::vector<int>({27, 91, 67})
+#define RIGHT_KEY std::vector<int>({27, 91, 67})
 #define UP_KEY std::vector<int>({27, 91, 65})
 #define DOWN_KEY std::vector<int>({27, 91, 66})
 #define HOME_KEY std::vector<int>({27, 79, 72})
@@ -22,5 +22,11 @@
 
 #define IS_CONTROL(key) (key == 27)
 #define GSTRING_CANCEL "sdfnwms90fhqm=3-f0-vq-4hq4h\\qethgq\\[ht[q45h"
+
+#define VCENTER 8
+#define HCENTER 40
+
+//debug mode (includes asserts)
+#define NDEBUG
 
 #endif

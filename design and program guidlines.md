@@ -37,4 +37,17 @@ The user will scroll up/down the list using a windowed scroll pane of the list. 
 - No **singletons**
 - no **static variables**
 - all functions not used in another file should be namespaced to limit the scope to the file said function is used in
-- functions used in only single files shall be inlined
+- functions used in only single files shall be inlined  
+
+---
+
+##<u>Menus:</u>
+
+**Main menu (a task list):**  
+
+-  Week, day, month, and all views
+    -  Week view shows day-names, and month view shows dates (dates and   
+       day-names that that there are tasks for)
+    - "All" view shows all the tasks, and so does day view.
+
+---

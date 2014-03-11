@@ -57,6 +57,17 @@ namespace common
         return (is_letter(ch) || is_number(ch) || is_special(ch));
     }
     
+    void center(const std::string& s)
+    {
+        using namespace std;
+        
+        int max = (s.size() / 2);
+        max -= int(HCENTER);
+        if(max < 0) max = 0;
+        for(int x = 0; x < max; x++) cout<< " ";
+        cout<< s;
+    }
+    
     bool string_is_int(const std::string& s)
     {
         unsigned short count(0);
@@ -68,6 +79,15 @@ namespace common
             }
         }
         return (count == 0);
+    }
+    
+    void wait()
+    {
+        for(short x = 0; x < 3; x++) std::cout<< std::endl;
+        std::cout<< "Press any key to continue..."<< std::endl;
+        cl();
+        gkey();
+        cl();
     }
     
     void cl()
@@ -85,20 +105,22 @@ namespace common
         return input::getch();
     }
     
+    bool kbhit()
+    {
+        return input::kbhit();
+    }
+    
     std::vector<int> gkey_funct()
     {
         using namespace std;
         
         vector<int> key;
-        if(input::kbhit())
+        key.push_back(input::getch());
+        if(IS_CONTROL(key[0]))
         {
-            key.push_back(input::getch());
-            if(IS_CONTROL(key[0]))
+            while(input::kbhit())
             {
-                while(input::kbhit())
-                {
-                    key.push_back(input::getch());
-                }
+                key.push_back(input::getch());
             }
         }
         return key;
@@ -109,6 +131,7 @@ namespace common
         std::string get_user_string(const std::string& s)
         {
             using namespace std;
+            
             
             vector<int> key;
             bool finished(false);
