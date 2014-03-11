@@ -11,6 +11,7 @@
 #include "global_defines.hpp"
 #include "date_class.hpp"
 #include "task_class.hpp"
+#include "scroll_display.hpp"
 
 #include <assert.h>
 
@@ -384,14 +385,19 @@ namespace taskDisplay
     };
     
     
-    void create_task_display(const vector<taskList::task_class>&, vector<string>&);
+    //main functions
+    void create_task_display(vector<taskList::task_class>&, vector<string>&, const sort_method&);
+    void create_task_display(vector<taskList::task_class>&, vector<string>&);
+    void sort_tasklist(vector<taskList::task_class>&, const sort_method&);
+    void display_tasks(const vector<taskList::task_class>&, scrollDisplay::scroll_display_class&);
+    
+    
+    //helper functions
     bool sort_compare(const taskList::task_class&, const taskList::task_class&, const sort_method&);
     bool compare_by_date(const taskList::task_class&, const taskList::task_class&);
     bool compare_by_name(const taskList::task_class&, const taskList::task_class&);
     bool no_compare(const taskList::task_class&, const taskList::task_class&);
     bool compare_by_priority(const taskList::task_class&, const taskList::task_class&);
-    void sort_tasklist(taskList::task_class&, const sort_method&);
-    void display_tasks(const vector<taskList::task_class>&, scrollDisplay::scroll_display_class&);
     
     
     
@@ -420,8 +426,6 @@ namespace taskDisplay
     
     inline bool sort_compare(const taskList::task_class& task1, const taskList::task_class& task2, const sort_method& method)
     {
-        sort_method temp_meth(none);
-        bool lessthan(false);
         function<bool(const taskList::task_class&, const taskList::task_class&)> compare_function[4] = {
             no_compare,
             compare_by_date,
@@ -475,9 +479,10 @@ namespace taskDisplay
         }
     }
     
-    inline void create_task_display(const vector<taskList::task_class>& tasks, vector<string>& disp_list)
+    inline void create_task_display(vector<taskList::task_class>& tasks, vector<string>& disp_list, const sort_method& sort)
     {
         disp_list.erase(disp_list.begin(), disp_list.end());
+        sort_tasklist(tasks, sort);
         if(tasks.size() > 0)
         {
             for(vector<taskList::task_class>::const_iterator it = tasks.begin(); it != tasks.end(); ++it)
@@ -485,6 +490,11 @@ namespace taskDisplay
                 disp_list.push_back(it->info.name);
             }
         }
+    }
+    
+    inline void create_task_display(vector<taskList::task_class>& tasks, vector<string>& disp_list)
+    {
+        create_task_display(tasks, disp_list, none);
     }
     
     inline void display_tasks(const vector<taskList::task_class>& tasks, scrollDisplay::scroll_display_class& display)
@@ -712,16 +722,30 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
     void task_list_menu()
     {
         using namespace common;
+        
+        //declarations:
         vector<int> ch;
         bool finished(false);
         scrollDisplay::scroll_display_class display;
         vector<string> display_list;
         vector<taskList::task_class> tasks;
+        taskDisplay::sort_method sort(taskDisplay::date);
+        string sort_names[(int(METHOD_MAX) + 1)] = {
+            "none",
+            "date",
+            "name",
+            "priority"
+        };
         
+        //initialization work (display setup, etc...):
         display = scrollDisplay::scroll_display_class(display_list);
-        taskDisplay::create_task_display(tasks, display_list);
+        taskDisplay::create_task_display(tasks, display_list, sort);
+        
+        /*window size can be set to anything.  Feel free to change it 
+         based on your preference! :)  */
         display.window_size() = 15;
         
+        //main loop:
         do
         {
             cls();
@@ -729,11 +753,161 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
             center("Task List: ");
             cout<< endl;
             for(char x = 0; x < 3; x++) cout<< '\n';
+            
             taskDisplay::display_tasks(tasks, display);
             
+            cout<< '\n';
+            for(char x = 0; x < 4; x++) cout<< '\n';
+            
+            if(display.window().size() > 0)
+            {
+                cout<< "[ENTER] -  Modify";
+                cout<< "  [DELETE] -  Delete  ";
+                cout<< "[HOME] -  First task  ";
+                cout<< "[END] -  Last task  ";
+            }
+            cout<< "\n";
+            cout<< " s -  Toggle Sort: "<< sort_names[sort]<< '\n';
+            cout<< " a -  Add new task\n";
+            cout<< " e -  EXIT";
+            cout.flush();
+            
+            ch = common::gkey_funct();
+            if(ch.size() > 0)
+            {
+                switch(IS_CONTROL(ch[0]))
+                {
+                    case true:
+                    {
+                        if(tasks.size() > 0)
+                        {
+                            if(ch == UP_KEY)
+                            {
+                                display.mv_up();
+                            }
+                            if(ch == DOWN_KEY)
+                            {
+                                display.mv_down();
+                            }
+                            if((ch == RIGHT_KEY) || (ch == PGUP_KEY))
+                            {
+                                display.pg_up();
+                            }
+                            if((ch == LEFT_KEY) || (ch == PGDOWN_KEY))
+                            {
+                                display.pg_down();
+                            }
+                            if(ch == HOME_KEY)
+                            {
+                                while(display.pg_up());
+                            }
+                            if(ch == END_KEY)
+                            {
+                                while(display.pg_down());
+                            }
+                            if(ch == DELETE_KEY)
+                            {
+                                //if is_sure()!  add it to common.cpp
+                                tasks.erase(tasks.begin() + display.gpos().whole);
+                                taskDisplay::create_task_display(tasks, display_list, sort);
+                            }
+                        }
+                        
+                    }
+                    break;
+                    
+                    case false:
+                    {
+                        switch(common::is_char(char(ch[0])))
+                        {
+                            case true:
+                            {
+                                switch(tolower(char(ch[0])))
+                                {
+                                    case 'a':
+                                    {
+                                        taskList::task_class temptask;
+                                        temptask.info.ddate.t = get_time();
+                                        if(modify_task(temptask))
+                                        {
+                                            tasks.push_back(temptask);
+                                            taskDisplay::create_task_display(tasks, display_list, sort);
+                                        }
+                                    }
+                                    break;
+                                    
+                                    case 's':
+                                    {
+                                        {
+                                            taskDisplay::sort_method tempsort[4] = {
+                                                taskDisplay::none,
+                                                taskDisplay::date,
+                                                taskDisplay::name,
+                                                taskDisplay::priority};
+                                            sort = tempsort[((int(sort) + 1) % (int(METHOD_MAX) + 1))];
+                                        }
+                                    }
+                                    break;
+                                    
+                                    case 'e':
+                                    {
+                                        finished = true;
+                                    }
+                                    break;
+                                    
+                                    default:
+                                    {
+                                    }
+                                    break;
+                                }
+                            }
+                            break;
+                            
+                            case false:
+                            {
+                                switch(ch[0])
+                                {
+                                    case ENTER_KEY:
+                                    {
+                                        if(tasks.size() > 0)
+                                        {
+                                            taskList::task_class temptask(tasks.at(display.gpos().whole));
+                                            if(modify_task(temptask))
+                                            {
+                                                tasks.at(display.gpos().whole) = temptask;
+                                                taskDisplay::create_task_display(tasks, display_list, sort);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                    
+                                    default:
+                                    {
+                                    }
+                                    break;
+                                }
+                            }
+                            break;
+                            
+                            default:
+                            {
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                    
+                    default:
+                    {
+                    }
+                    break;
+                }
+            }
         }while(!finished);
         
         //function end
     }
+    
+    
 }
 
