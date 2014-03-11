@@ -501,11 +501,12 @@ namespace taskDisplay
     {
         date::date_val d1, d2;
         d2 = get_time();
-        for(char x = 0; x < display.window_size(); x++)
+        for(char x = 0; x < signed(display.window().size()); x++)
         {
             d1 = tasks.at(display.window_beg() + x).info.ddate.t;
             if(d1 == d2) cout<< " *";
             if(d1 < d2) cout<< ">>";
+            if(d2 < d1) cout<< "  ";
             switch(x == display.gpos().part)
             {
                 case true:
@@ -845,6 +846,7 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
                                                 taskDisplay::name,
                                                 taskDisplay::priority};
                                             sort = tempsort[((int(sort) + 1) % (int(METHOD_MAX) + 1))];
+                                            taskDisplay::create_task_display(tasks, display_list, sort);
                                         }
                                     }
                                     break;
