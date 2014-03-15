@@ -437,7 +437,7 @@ namespace taskDisplay
     
     inline void sort_tasklist(vector<taskList::task_class>& tasks, const sort_method& method)
     {
-        if(tasks.size() > 1)
+        if((tasks.size() > 1) && (method != none))
         {
             taskList::task_class temptask(*tasks.begin());
             tasks.erase(tasks.begin());
@@ -477,6 +477,7 @@ namespace taskDisplay
                 break;
             }
         }
+        tasks.shrink_to_fit();
     }
     
     inline void create_task_display(vector<taskList::task_class>& tasks, vector<string>& disp_list, const sort_method& sort)
@@ -832,8 +833,8 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
                                         if(modify_task(temptask))
                                         {
                                             tasks.push_back(temptask);
-                                            taskDisplay::create_task_display(tasks, display_list, sort);
                                         }
+                                        taskDisplay::create_task_display(tasks, display_list, sort);
                                     }
                                     break;
                                     
