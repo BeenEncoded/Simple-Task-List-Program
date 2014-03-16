@@ -12,6 +12,7 @@
 #include "date_class.hpp"
 #include "task_class.hpp"
 #include "scroll_display.hpp"
+#include "filesystem.hpp"
 
 #include <assert.h>
 
@@ -400,7 +401,7 @@ namespace taskDisplay
     bool compare_by_priority(const taskList::task_class&, const taskList::task_class&);
     
     
-    
+    //task comparisons: 
     bool no_compare(const taskList::task_class& task1, const taskList::task_class& task2)
     {
         return true;
@@ -410,7 +411,7 @@ namespace taskDisplay
     {
         date::date_val d1, d2;
         d1 = task1.info.ddate.t;
-        d2 = task1.info.ddate.t;
+        d2 = task2.info.ddate.t;
         return (d1 < d2);
     }
     
@@ -423,6 +424,9 @@ namespace taskDisplay
     {
         return (task1.info.priority < task2.info.priority);
     }
+    
+    //task comparisons end
+    
     
     inline bool sort_compare(const taskList::task_class& task1, const taskList::task_class& task2, const sort_method& method)
     {
@@ -529,6 +533,19 @@ namespace taskDisplay
             }
             cout<< endl;
         }
+    }
+    
+    
+}
+
+namespace filesystem
+{
+    bool save_tasklist(const std::vector<taskList::task_class>&, const std::string&);
+    
+    
+    inline bool save_tasklist(const std::vector<taskList::task_class>& tasks, const std::string& filename)
+    {
+        /* add function to true/false if string contains bad chars */
     }
     
     
