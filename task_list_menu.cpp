@@ -538,14 +538,18 @@ namespace taskDisplay
     
 }
 
-namespace filesystem
+namespace task_iostream
 {
     bool save_tasklist(const std::vector<taskList::task_class>&, const std::string&);
     
     
-    inline bool save_tasklist(const std::vector<taskList::task_class>& tasks, const std::string& filename)
+    inline bool save_tasklist(const std::vector<taskList::task_class>& tasks, const std::string& path)
     {
-        /* add function to true/false if string contains bad chars */
+        bool success(false);
+        if(fsys::path_chars_valid(fsys::fname(path)))
+        {
+            
+        }
     }
     
     
