@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <time.h>
+#include <fstream>
 #include <vector>
 #include <type_traits>
 #include <functional>
@@ -541,15 +542,75 @@ namespace taskDisplay
 namespace task_iostream
 {
     bool save_tasklist(const std::vector<taskList::task_class>&, const std::string&);
+    bool load_tasklist(std::vector<taskList::task_class>&, const std::string&);
+    std::string tasklist_file();
     
     
-    inline bool save_tasklist(const std::vector<taskList::task_class>& tasks, const std::string& path)
+    inline bool save_tasklist(std::vector<taskList::task_class>& tasks, const std::string& path)
     {
         bool success(false);
-        if(fsys::path_chars_valid(fsys::fname(path)))
+        switch(fsys::path_chars_valid(fsys::fname(path)))
         {
+            case true:
+            {
+                std::ofstream out;
+                out.open(path.c_str(), ios::out);
+                {
+                    using namespace taskList;
+                    out<< tasks;
+                }
+                out.close();
+                success = fsys::is_file(path);
+                if(!success)
+                {
+                    common::cls();
+                    for(char x = 0; x < VCENTER; x++) cout<< '\n';
+                    cout<< "Error: stream could not write to file: \""<< path<< "\"\n";
+                    common::wait();
+                    common::cls();
+                }
+            }
+            break;
+            
+            case false:
+            {
+                common::cls();
+                for(char x = 0; x < VCENTER; x++) cout<< '\n';
+                cout<< "ERROR: inline bool save_tasklist(std::vector<taskList::task_class>& tasks, const std::string& path)\n\n\
+invalid pathname \""<< fsys::fname(path)<< "\"\n";
+                common::wait();
+                common::cls();
+            }
+            break;
+            
+            default:
+            {
+            }
+            break;
             
         }
+        return success;
+    }
+    
+    inline bool load_tasklist(std::vector<taskList::task_class>& tasks, const std::string& path)
+    {
+        bool success(false);
+        tasks.erase(tasks.begin(), tasks.end());
+        if(fsys::is_file(path) && fsys::is_valid_path(path))
+        {
+            ifstream in;
+            in.open(path.c_str(), ios::in);
+            in>> tasks;
+            success = (!in.fail());
+            in.close();
+        }
+        tasks.shrink_to_fit();
+        return success;
+    }
+    
+    inline std::string tasklist_file()
+    {
+        return std::string((fsys::current_path() + "/Your Tasks.tl"));
     }
     
     
@@ -748,7 +809,7 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
         
         //declarations:
         vector<int> ch;
-        bool finished(false);
+        bool finished(false), loaded(false);
         scrollDisplay::scroll_display_class display;
         vector<string> display_list;
         vector<taskList::task_class> tasks;
@@ -761,6 +822,7 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
         };
         
         //initialization work (display setup, etc...):
+        loaded = task_iostream::load_tasklist(tasks, task_iostream::tasklist_file());
         display = scrollDisplay::scroll_display_class(display_list);
         taskDisplay::create_task_display(tasks, display_list, sort);
         
@@ -830,9 +892,35 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
                             }
                             if(ch == DELETE_KEY)
                             {
-                                //if is_sure()!  add it to common.cpp
-                                tasks.erase(tasks.begin() + display.gpos().whole);
-                                taskDisplay::create_task_display(tasks, display_list, sort);
+                                if(common::inp::is_sure(std::string("Are you sure\
+ you want to delete \"" + tasks.at(display.gpos().whole).info.name + "\"?")))
+                                {
+                                    tasks.erase(tasks.begin() + display.gpos().whole);
+                                    taskDisplay::create_task_display(tasks, display_list, sort);
+                                    if(loaded)
+                                    {
+                                        switch(tasks.size() == 0)
+                                        {
+                                            case true:
+                                            {
+                                                loaded = false;
+                                            }
+                                            break;
+
+                                            case false:
+                                            {
+                                                task_iostream::save_tasklist(tasks, task_iostream::tasklist_file());
+                                            }
+                                            break;
+
+                                            default:
+                                            {
+                                                task_iostream::save_tasklist(tasks, task_iostream::tasklist_file());
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
                         
@@ -854,6 +942,8 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
                                         if(modify_task(temptask))
                                         {
                                             tasks.push_back(temptask);
+                                            loaded = true;
+                                            task_iostream::save_tasklist(tasks, task_iostream::tasklist_file());
                                         }
                                         taskDisplay::create_task_display(tasks, display_list, sort);
                                     }
@@ -928,7 +1018,17 @@ value: \"" + task.info.name + "\"\n\n\nEnter the name: ")))
                 }
             }
         }while(!finished);
-        
+        if(loaded || (!loaded && (tasks.size() > 0)))
+        {
+            if(!task_iostream::save_tasklist(tasks, task_iostream::tasklist_file()))
+            {
+                common::cls();
+                for(char x = 0; x < VCENTER; x++) cout<< endl;
+                cout<< "Could not save to \""<< task_iostream::tasklist_file()<< "\"!\n";
+                common::wait();
+                common::cls();
+            }
+        }
         //function end
     }
     

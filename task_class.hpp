@@ -2,6 +2,7 @@
 #define TASK_CLASS_HPP_INCLUDED
 #include <time.h>
 #include <string>
+#include <vector>
 #include <iostream>
 
 /** Task_class may not be much, but operators and other functions may be

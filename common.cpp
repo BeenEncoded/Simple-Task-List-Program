@@ -218,6 +218,46 @@ namespace common
             return input;
         }
         
+        bool is_sure(const std::string& message)
+        {
+            using namespace std;
+            bool sure(false), finished(false);
+            do
+            {
+                common::cls();
+                cout.flush();
+                for(char x = 0; x < VCENTER; x++) cout<< '\n';
+                cout.flush();
+                common::center((message.empty() ? "ARE YOU SURE?" : message));
+                cout<< "\n\n";
+                common::center("[Y]es or [N]o?");
+                cout<< '\n';
+                
+                switch(tolower(common::gkey()))
+                {
+                    case 'y':
+                    {
+                        finished = true;
+                        sure = true;
+                    }
+                    break;
+                    
+                    case 'n':
+                    {
+                        finished = true;
+                        sure = false;
+                    }
+                    break;
+                    
+                    default:
+                    {
+                    }
+                    break;
+                }
+            }while(!finished);
+            return sure;
+        }
+        
         
     }
 }

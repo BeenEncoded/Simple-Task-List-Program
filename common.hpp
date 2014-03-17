@@ -24,6 +24,7 @@ namespace common
     namespace inp
     {
         std::string get_user_string(const std::string&);
+        bool is_sure(const std::string&);
     }
 }
 
