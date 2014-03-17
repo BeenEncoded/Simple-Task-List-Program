@@ -140,5 +140,28 @@ namespace taskList
         return in;
     }
     
+    std::ostream& operator<<(std::ostream& out, std::vector<taskList::task_class>& tasks)
+    {
+        for(auto t : tasks) out<< t;
+        out<< '\0';
+        return out;
+    }
+    
+    std::istream& operator>>(std::istream& in, std::vector<taskList::task_class>& tasks)
+    {
+        tasks.erase(tasks.begin(), tasks.end());
+        while(in.good() && (char(in.peek()) != '\0'))
+        {
+            tasks.push_back(taskList::task_class());
+            in>> tasks.back();
+            if(in.fail())
+            {
+                tasks.pop_back();
+            }
+        }
+        if(char(in.peek()) == '\0') in.get();
+        return in;
+    }
+    
     
 }

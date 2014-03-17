@@ -2,6 +2,7 @@
 #define TASK_CLASS_HPP_INCLUDED
 #include <time.h>
 #include <string>
+#include <vector>
 #include <iostream>
 
 /** Task_class may not be much, but operators and other functions may be
@@ -24,6 +25,9 @@ namespace taskList
 
     std::ostream& operator<<(std::ostream&, taskList::task_data&);
     std::istream& operator>>(std::istream&, taskList::task_data&);
+    
+    std::ostream& operator<<(std::ostream&, std::vector<task_class>&);
+    std::istream& operator>>(std::istream&, std::vector<task_class>&);
     
     struct due_date_data
     {
