@@ -446,6 +446,8 @@ namespace taskDisplay
         {
             taskList::task_class temptask(*tasks.begin());
             tasks.erase(tasks.begin());
+            bool reallocated(false);
+            unsigned int itref(0);
             for(vector<taskList::task_class>::iterator it = tasks.begin(); it != tasks.end(); it++)
             {
                 if(sort_compare(*it, temptask, method))
@@ -481,6 +483,21 @@ namespace taskDisplay
                 }
                 break;
             }
+            
+            //now we move all the tasks with no due date to the back:
+            itref = 0;
+            for(std::vector<taskList::task_class>::iterator it = tasks.begin(); it != tasks.end(); ++it, itref++)
+            {
+                temptask = *it;
+                it = tasks.erase(it);
+                reallocated = ((tasks.size() + 1) > tasks.capacity());
+                tasks.push_back(temptask);
+                if(reallocated)
+                {
+                    reallocated = false;
+                    it = (tasks.begin() + itref);
+                }
+            }
         }
         tasks.shrink_to_fit();
     }
@@ -503,16 +520,37 @@ namespace taskDisplay
         create_task_display(tasks, disp_list, none);
     }
     
+    
+    
     inline void display_tasks(const vector<taskList::task_class>& tasks, scrollDisplay::scroll_display_class& display)
     {
         date::date_val d1, d2;
         d2 = get_time();
         for(char x = 0; x < signed(display.window().size()); x++)
         {
-            d1 = tasks.at(display.window_beg() + x).info.ddate.t;
-            if(d1 == d2) cout<< " *";
-            if(d1 < d2) cout<< ">>";
-            if(d2 < d1) cout<< "  ";
+            switch(tasks.at(display.window_beg() + x).info.ddate.on)
+            {
+                case true:
+                {
+                    d1 = tasks.at(display.window_beg() + x).info.ddate.t;
+                    if(d1 == d2) cout<< " *";
+                    if(d1 < d2) cout<< ">>";
+                    if(d2 < d1) cout<< "  ";
+                }
+                break;
+                
+                case false:
+                {
+                    cout<< "  ";
+                }
+                break;
+                
+                default:
+                {
+                    cout<< "  ";
+                }
+                break;
+            }
             switch(x == display.gpos().part)
             {
                 case true:
