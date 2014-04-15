@@ -7,7 +7,7 @@
 namespace taskListMenu
 {
     bool modify_task(taskList::task_class&);
-    void task_list_menu();
+    void task_management_menu();
 }
 
 #endif

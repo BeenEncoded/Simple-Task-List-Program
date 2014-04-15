@@ -6,6 +6,6 @@ using namespace std;
 
 int main(int av, char** ac)
 {
-    taskListMenu::task_list_menu();
+    taskListMenu::task_management_menu();
     return 0;
 }

@@ -20,10 +20,10 @@ namespace date
         void operator=(const date_val&);
         void operator=(const struct tm&);
         
-        bool operator==(const date_val&);
-        bool operator!=(const date_val&);
-        bool operator<(const date_val&);
-        bool operator<=(const date_val&);
+        bool operator==(const date_val&) const;
+        bool operator!=(const date_val&) const;
+        bool operator<(const date_val&) const;
+        bool operator<=(const date_val&) const;
         
         void to_tm(struct tm&) const;
         

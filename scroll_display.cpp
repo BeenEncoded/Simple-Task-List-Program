@@ -199,11 +199,35 @@ namespace scrollDisplay
         bool success(false);
         if(this->display->size() > 0)
         {
-            if(this->pos.whole >= (this->wind.size - 1))
+            
+            /* So, first we need to check if the "previous window" is within
+             the vector's bounds.  If it is, then we simply pg-up, otherwise
+             we just jump to the first element.*/
+            switch(this->pos.whole >= (this->wind.size - 1))
             {
-                this->pos.whole -= (this->wind.size - 1);
-                this->sync();
-                success = true;
+                case true:
+                {
+                    this->pos.whole -= (this->wind.size - 1);
+                    this->sync();
+                    success = true;
+                }
+                break;
+                
+                case false:
+                {
+                    if(this->pos.whole != 0)
+                    {
+                        this->pos.whole = 0;
+                        this->sync();
+                        success = true;
+                    }
+                }
+                break;
+                
+                default:
+                {
+                }
+                break;
             }
         }
         return success;
@@ -215,11 +239,35 @@ namespace scrollDisplay
         bool success(false);
         if(this->display->size() > 0)
         {
-            if(unsigned(((this->display->size() - 1) - this->pos.whole)) >= (this->wind.size - 1))
+            
+            /* So, basically, we need to check if the "next window" is within 
+             the display vector's bounds.  If it is, then we simply page-down,
+             otherwise, we can just jump to the end. */
+            switch(unsigned(((this->display->size() - 1) - this->pos.whole)) >= (this->wind.size - 1))
             {
-                this->pos.whole += (this->wind.size - 1);
-                success = true;
-                this->sync();
+                case true:
+                {
+                    this->pos.whole += (this->wind.size - 1);
+                    success = true;
+                    this->sync();
+                }
+                break;
+                
+                case false:
+                {
+                    if(this->pos.whole < (this->display->size() - 1))
+                    {
+                        this->pos.whole = (this->display->size() - 1);
+                        this->sync();
+                        success = true;
+                    }
+                }
+                break;
+                
+                default:
+                {
+                }
+                break;
             }
         }
         return success;

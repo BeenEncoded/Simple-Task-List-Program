@@ -73,14 +73,25 @@ namespace scrollDisplay
         bool pg_up();
         bool pg_down();
         
+        /* Returns the "window" as a list of strings.  This can
+         be displayed. */
         std::vector<std::string> window();
         
+        /* Returns the current position in the window.  part
+         represents the position relative to the window, and
+         whole represents the position relative to the entire
+         display.*/
         const position_data& gpos();
+        
+        /* Returns the size of the scroll display.  can be 
+         modified directly. */
         long &window_size()
         {
             return this->wind.size;
         }
         
+        /* Returns the first position of the window, relative to the 
+         entire display. */
         const signed long& window_beg()
         {
             assert(this->display != NULL);

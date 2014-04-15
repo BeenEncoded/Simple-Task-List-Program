@@ -101,17 +101,17 @@ namespace date
         this->yday = i.tm_yday;
     }
 
-    bool date_val::operator==(const date_val& i)
+    bool date_val::operator==(const date_val& i) const
     {
         return ((this->yday == i.yday) && (this->year == i.year));
     }
 
-    bool date_val::operator!=(const date_val& i)
+    bool date_val::operator!=(const date_val& i) const
     {
         return !(this->operator==(i));
     }
     
-    bool date_val::operator<(const date_val& d)
+    bool date_val::operator<(const date_val& d) const
     {
         bool lessthan(false);
         switch(this->year < d.year)
@@ -136,7 +136,7 @@ namespace date
         return lessthan;
     }
     
-    bool date_val::operator<=(const date_val& d)
+    bool date_val::operator<=(const date_val& d) const
     {
         return (this->operator<(d) || this->operator==(d));
     }

@@ -21,6 +21,16 @@ namespace common
     
     bool string_is_int(const std::string&);
     
+    inline std::string lcase(const std::string& s)
+    {
+        std::string temps(s);
+        for(std::string::iterator it = temps.begin(); it != temps.end(); it++)
+        {
+            *it = tolower(*it);
+        }
+        return temps;
+    }
+    
     namespace inp
     {
         std::string get_user_string(const std::string&);

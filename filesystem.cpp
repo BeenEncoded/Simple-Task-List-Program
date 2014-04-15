@@ -88,5 +88,17 @@ namespace fsys
         return temps;
     }
     
+    /* Returns true if no errors occured, and the folder was created. */
+    bool create_folders(const std::string& s)
+    {
+        boost::filesystem::path p(s);
+        boost::system::error_code err;
+        if(!is_valid_path(s))
+        {
+            boost::filesystem::create_directories(p, err);
+        }
+        return ((!err) && is_folder(s));
+    }
+    
     
 }
