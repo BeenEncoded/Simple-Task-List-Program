@@ -1,24 +1,15 @@
-#include <iostream>
 #include <string>
 #include <sstream>
-#include <time.h>
 #include <fstream>
 #include <vector>
-#include <type_traits>
-#include <functional>
-#include <map>
 
 #include "task_list_menu.hpp"
 #include "common.hpp"
-#include "global_defines.hpp"
-#include "date_class.hpp"
 #include "task_class.hpp"
 #include "filesystem.hpp"
 #include "tasklist_menu_globals.hpp"
 #include "tasklist_menu_list_view.hpp"
 #include "tasklist_menu_date_view.hpp"
-
-#include <assert.h>
 
 using namespace std;
 using namespace tasklist_menu_globals;
@@ -127,18 +118,18 @@ invalid pathname \""<< fsys::fname(path)<< "\"\n";
  to display, or command to execute.*/
 namespace taskListMenu
 {
-    bool call_menu(menu_return_data&, vector<taskList::task_class>&);
-    bool is_menu_command(const menu_command_type&);
+    bool call_menu(tasklist_menu_globals::menu_return_data&, vector<taskList::task_class>&);
+    bool is_menu_command(const tasklist_menu_globals::menu_command_type&);
     
     /* Returns true/false if the menu command is a command 
      that will apply a menu (!err and !quit) */
-    inline bool is_menu_command(const menu_command_type& command)
+    inline bool is_menu_command(const tasklist_menu_globals::menu_command_type& command)
     {
-        return ((command != err) && (command != quit));
+        return ((command != tasklist_menu_globals::err) && (command != tasklist_menu_globals::quit));
     }
     
     /* Return true/false if command doesn't become an error */
-    inline bool call_menu(menu_return_data& ret, vector<taskList::task_class>& tasks)
+    inline bool call_menu(tasklist_menu_globals::menu_return_data& ret, vector<taskList::task_class>& tasks)
     {
         using namespace tasklist_menu_list_view;
         using namespace tasklist_menu_date_view;
@@ -148,13 +139,13 @@ namespace taskListMenu
         {
             switch(ret.command)
             {
-                case list_view:
+                case tasklist_menu_globals::list_view:
                 {
                     ret = task_list_menu(tasks);
                 }
                 break;
                 
-                case date_view:
+                case tasklist_menu_globals::date_view:
                 {
                     ret = task_list_menu_by_date(tasks);
                 }
@@ -165,7 +156,7 @@ namespace taskListMenu
                 }
                 break;
             }
-            success = (ret.command != err);
+            success = (ret.command != tasklist_menu_globals::err);
         }
         return success;
     }
@@ -174,7 +165,7 @@ namespace taskListMenu
     {
         vector<taskList::task_class> tasks;
         bool loaded(task_iostream::load_tasklist(tasks, fsys::tasklist_file()));
-        menu_return_data state;
+        tasklist_menu_globals::menu_return_data state;
         
         switch(call_menu(state, tasks))
         {
