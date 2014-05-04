@@ -4,7 +4,7 @@
 #include <string>
 #include <assert.h>
 
-#include "global_defines.hpp"
+#include "../globals/global_defines.hpp"
 
 namespace scrollDisplay
 {

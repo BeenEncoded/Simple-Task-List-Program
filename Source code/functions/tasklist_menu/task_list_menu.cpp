@@ -5,15 +5,14 @@
 #include <iostream>
 
 #include "task_list_menu.hpp"
-#include "common.hpp"
-#include "task_class.hpp"
-#include "filesystem.hpp"
-#include "tasklist_menu_globals.hpp"
-#include "tasklist_menu_list_view.hpp"
-#include "tasklist_menu_date_view.hpp"
+#include "../display/common.hpp"
+#include "../../classes/task_class.hpp"
+#include "../filesystem/filesystem.hpp"
+#include "../tasklist_menu/tasklist_menu_globals.hpp"
+#include "../tasklist_menu/tasklist_menu_list_view.hpp"
+#include "../tasklist_menu/tasklist_menu_date_view.hpp"
 
 using namespace std;
-using namespace tasklist_menu_globals;
 
 namespace
 {

@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <term.h>
 
-#include "iofunctions.hpp"
+#include "../../functions/display/iofunctions.hpp"
 
 namespace input
 {

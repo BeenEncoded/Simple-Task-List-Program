@@ -4,7 +4,7 @@
 #include <exception>
 
 #include "filesystem.hpp"
-#include "global_defines.hpp"
+#include "../../globals/global_defines.hpp"
 
 namespace
 {

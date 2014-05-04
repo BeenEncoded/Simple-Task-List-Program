@@ -5,7 +5,7 @@
 #include <exception>
 
 #include "date_class.hpp"
-#include "global_defines.hpp"
+#include "../globals/global_defines.hpp"
 
 #include <assert.h>
 

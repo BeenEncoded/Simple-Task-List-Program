@@ -3,9 +3,9 @@
 #include <vector>
 #include <sstream>
 
-#include "iofunctions.hpp"
+#include "../../functions/display/iofunctions.hpp"
 #include "common.hpp"
-#include "global_defines.hpp"
+#include "../../globals/global_defines.hpp"
 
 namespace
 {
