@@ -1,11 +1,11 @@
-#include <time.h>
+#include <ctime>
 #include <string>
 #include <sstream>
 #include <vector>
 #include <exception>
 
 #include "date_class.hpp"
-#include "../globals/global_defines.hpp"
+#include "global_defines.hpp"
 
 #include <assert.h>
 
@@ -156,13 +156,13 @@ namespace date
     /** All operators add/subract a specified number of days
      to or from the date. */
 
-    date_val date_val::operator++(int i)
+    date_val date_val::operator++(__attribute__((unused)) int i)
     {
         *this = (*this + 1);
         return *this;
     }
 
-    date_val date_val::operator--(int i)
+    date_val date_val::operator--(__attribute__((unused)) int i)
     {
         *this = (*this - 1);
         return *this;
@@ -305,8 +305,8 @@ namespace date
     {
         std::string disp;
         disp += month_names().at(d.month);
-        disp += (" " + conv<unsigned short, std::string>((d.mday + 1)) + ", ");
-        disp += conv<unsigned int, std::string>(d.year);
+        disp += (" " + std::to_string((d.mday + 1)) + ", ");
+        disp += std::to_string(d.year);
         return disp;
     }
     

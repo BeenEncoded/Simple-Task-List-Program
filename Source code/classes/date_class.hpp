@@ -1,6 +1,6 @@
 #ifndef DATE_CLASS_HPP_INCLUDED
 #define DATE_CLASS_HPP_INCLUDED
-#include <time.h>
+#include <ctime>
 
 #define YDAYS(year) (__isleap(year) ? 366 : 365)
 
